@@ -21,6 +21,12 @@ namespace DefaultNamespace.ScriptableEvents.Editor
 
             base.OnInspectorGUI();
 
+            MakeGUI(_target);
+            
+        }
+
+        public static void MakeGUI(ScriptableEventBase _target)
+        {
             if (GUILayout.Button("Debug Raise Event"))
             {
                _target.Raise();

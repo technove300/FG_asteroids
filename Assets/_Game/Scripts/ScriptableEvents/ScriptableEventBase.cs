@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DefaultNamespace.ScriptableEvents
 {
-    public abstract class ScriptableEventBase : ScriptableObject
+    [System.Serializable]public abstract class ScriptableEventBase : ScriptableObject
     {
         private event Action _eventNoPayload;
         

@@ -8,7 +8,7 @@ namespace Asteroids
     [RequireComponent(typeof(Rigidbody2D))]
     public class Asteroid : MonoBehaviour
     {
-        [SerializeField] private ScriptableEventInt _onAsteroidDestroyed;
+        [SerializeField] public ScriptableEventInt _onAsteroidDestroyed;
         
         [Header("Config:")]
         [SerializeField] private float _minForce;
