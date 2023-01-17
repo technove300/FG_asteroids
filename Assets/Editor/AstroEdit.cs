@@ -9,7 +9,7 @@ using Variables;
 public class AstroEdit : EditorWindow
 {
     int mode = 0;
-    string[] modeNames = {"Objects", "Variables", "Events", "Graphics"};
+    string[] modeNames = {"Variables", "Events", "Graphics"};
     Vector2 scrollPos;
 
     ScriptableEventBase currentEvent = null;
@@ -23,10 +23,9 @@ public class AstroEdit : EditorWindow
         
         switch (mode)
         {
-            case 0:     break;
-            case 1:  VarMode();   break;
-            case 2:  EventMode();   break;
-            case 3:  GfxMode();   break;
+            case 0:  VarMode();   break;
+            case 1:  EventMode();   break;
+            case 2:  GfxMode();   break;
             default:    break;
         }
     }
