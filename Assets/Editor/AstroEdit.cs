@@ -253,13 +253,15 @@ public class AstroEdit : EditorWindow
                         so.Update();
                         Sprite sprite_tex = sprite.objectReferenceValue as Sprite;
                         Color color_col = colour.colorValue;
-                        GUI.color = color_col;
-                        using (new GUILayout.VerticalScope( GUILayout.MinWidth(300)))
+                        
+                        using (new GUILayout.VerticalScope( EditorStyles.helpBox, GUILayout.MaxWidth(100) ))
                         {
+                            GUI.color = color_col;
                             GUILayout.Label(sprite_tex.texture, GUILayout.MaxHeight(100));
+                            GUI.color = Color.white;
                         }
-                        GUI.color = Color.white;
-                        using (new GUILayout.VerticalScope())
+                        
+                        using (new GUILayout.VerticalScope( EditorStyles.helpBox, GUILayout.MaxWidth(400)))
                         {
                             EditorGUILayout.PropertyField(  sprite );
                             EditorGUILayout.PropertyField( colour );
