@@ -9,7 +9,7 @@ using Variables;
 public class AstroEdit : EditorWindow
 {
     int mode = 0;
-    string[] modeNames = {"Objects", "Edit", "Events", "Graphics"};
+    string[] modeNames = {"Objects", "Variables", "Events", "Graphics"};
     Vector2 scrollPos;
 
     ScriptableEventBase currentEvent = null;
@@ -23,10 +23,10 @@ public class AstroEdit : EditorWindow
         
         switch (mode)
         {
-            case 1:  ObjMode();   break;
+            case 0:     break;
+            case 1:  VarMode();   break;
             case 2:  EventMode();   break;
             case 3:  GfxMode();   break;
-            case 4:         break;
             default:    break;
         }
     }
@@ -170,7 +170,7 @@ public class AstroEdit : EditorWindow
         }
     }
 
-    void ObjMode()
+    void VarMode()
     {
         using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
         {
@@ -198,24 +198,89 @@ public class AstroEdit : EditorWindow
         var objects = Resources.FindObjectsOfTypeAll<FloatVariable>();
         foreach (FloatVariable obj in objects)
         {
-            if (GUILayout.Button( obj.name ))
-                {
-                    AssetDatabase.OpenAsset(obj.GetInstanceID());
-                    currentObj = obj;
-                }
+
+            using ( new GUILayout.HorizontalScope ( EditorStyles.helpBox ))
+            {
+                SerializedObject so = new SerializedObject(obj);
+                so.Update();
+                GUILayout.Label(obj.name);
+                //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
+                EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
+                so.ApplyModifiedProperties();
+            }
+
+        }
+        var objects1 = Resources.FindObjectsOfTypeAll<IntVariable>();
+        foreach (IntVariable obj in objects1)
+        {
+
+            using ( new GUILayout.HorizontalScope ( EditorStyles.helpBox ))
+            {
+                SerializedObject so = new SerializedObject(obj);
+                so.Update();
+                GUILayout.Label(obj.name);
+                //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
+                EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
+                so.ApplyModifiedProperties();
+            }
+
         }
     }
 
     void GfxMode()
     {
-        var objects = Resources.FindObjectsOfTypeAll<SpriteRenderer>();
-        foreach (SpriteRenderer obj in objects)
+        List<String> checkedObjs = new List<String>();
+        using ( var scrollView = new EditorGUILayout.ScrollViewScope(scrollPos))
         {
-            if (GUILayout.Button( obj.name ))
+            scrollPos = scrollView.scrollPosition;
+            var objects = Resources.FindObjectsOfTypeAll<SpriteRenderer>();
+            foreach (SpriteRenderer obj in objects)
+            {
+                if (checkedObjs.Contains(obj.name))     continue;
+                checkedObjs.Add(obj.name);
+                
+                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
                 {
-                    AssetDatabase.OpenAsset(obj.GetInstanceID());
-                    //currentObj = obj;
+                    SerializedObject so = new SerializedObject(obj);
+                    var sprite = so.FindProperty( "m_Sprite" );
+                    var colour = so.FindProperty( "m_Color" );
+                    using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                    {
+                        GUILayout.Label(obj.name);
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        so.Update();
+                        Sprite sprite_tex = sprite.objectReferenceValue as Sprite;
+                        Color color_col = colour.colorValue;
+                        GUI.color = color_col;
+                        using (new GUILayout.VerticalScope( GUILayout.MinWidth(300)))
+                        {
+                            GUILayout.Label(sprite_tex.texture, GUILayout.MaxHeight(100));
+                        }
+                        GUI.color = Color.white;
+                        using (new GUILayout.VerticalScope())
+                        {
+                            EditorGUILayout.PropertyField(  sprite );
+                            EditorGUILayout.PropertyField( colour );
+
+                        }
+                        
+                        /*
+                        var property = so.GetIterator();           
+                        while (property.NextVisible(true))
+                        {
+                            using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
+                            {
+                                GUILayout.Label(property.name);
+                                EditorGUILayout.PropertyField( property );
+                            }
+                        } */
+                        so.ApplyModifiedProperties();
+                    }
+                    
                 }
+            }
         }
     }
 
