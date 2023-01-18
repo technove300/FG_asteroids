@@ -22,7 +22,7 @@ public class AstroEdit : EditorWindow
         
         switch (mode)
         {
-            case 0:     break;
+            case 0:  ShipEdit.ModalEditor();   break;
             case 1:  AstroidEdit.ModalEditor();   break;
             case 2:  VarEdit.ModalEditor();   break;
             case 3:  EventEdit.ModalEditor();   break;

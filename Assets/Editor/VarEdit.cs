@@ -13,12 +13,12 @@ public static class VarEdit
         var objects = Resources.FindObjectsOfTypeAll<FloatVariable>();
         foreach (FloatVariable obj in objects)
         {
-
+            
             using ( new GUILayout.HorizontalScope ( EditorStyles.helpBox ))
             {
                 SerializedObject so = new SerializedObject(obj);
                 so.Update();
-                GUILayout.Label(obj.name);
+                GUILayout.Label(AssetDatabase.GetAssetPath(obj.GetInstanceID()));
                 //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
                 EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
                 so.ApplyModifiedProperties();
@@ -28,12 +28,13 @@ public static class VarEdit
         var objects1 = Resources.FindObjectsOfTypeAll<IntVariable>();
         foreach (IntVariable obj in objects1)
         {
+            
 
             using ( new GUILayout.HorizontalScope ( EditorStyles.helpBox ))
             {
                 SerializedObject so = new SerializedObject(obj);
                 so.Update();
-                GUILayout.Label(obj.name);
+                GUILayout.Label(AssetDatabase.GetAssetPath(obj.GetInstanceID()));
                 //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
                 EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
                 so.ApplyModifiedProperties();

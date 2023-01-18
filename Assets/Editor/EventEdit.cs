@@ -73,14 +73,21 @@ public static class EventEdit
             var eventVars = Resources.FindObjectsOfTypeAll<IntObservable>();
             foreach (IntObservable obj in eventVars)
             {
-                using ( new GUILayout.HorizontalScope ( EditorStyles.helpBox ))
+                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
                 {
-                    SerializedObject so = new SerializedObject(obj);
-                    so.Update();
-                    GUILayout.Label(obj.name);
-                    //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
-                    EditorGUILayout.PropertyField( so.FindProperty( "_onValueChangedEvent" ));
-                    so.ApplyModifiedProperties();
+                    using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                    {
+                        GUILayout.Label(AssetDatabase.GetAssetPath(obj.GetInstanceID()));
+                    }
+                    using ( new GUILayout.HorizontalScope ())
+                    {
+                        SerializedObject so = new SerializedObject(obj);
+                        so.Update();
+                        GUILayout.Label(obj.name);
+                        //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
+                        EditorGUILayout.PropertyField( so.FindProperty( "_onValueChangedEvent" ));
+                        so.ApplyModifiedProperties();
+                    }
                 }
             }
         }
@@ -95,7 +102,7 @@ public static class EventEdit
                     //currentEvent = null;
                 }
             }
-
+            /*
             var gameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             using ( var scrollView = new EditorGUILayout.ScrollViewScope(scrollPos))
             {
@@ -107,7 +114,11 @@ public static class EventEdit
                     {
                             if (script == null) continue;
                             if (!(script.ToString().Contains("ScriptableEvent"))) continue;
-                        
+
+                            using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                            {
+                                GUILayout.Label(AssetDatabase.GetAssetPath(script.GetInstanceID()));
+                            }
                             
                             SerializedObject so = new SerializedObject(script);
                             so.Update();
@@ -131,7 +142,7 @@ public static class EventEdit
                                 {
                                     for (int i = 0; i < property.arraySize; i++)
                                         OnVariable.Invoke(property.GetArrayElementAtIndex(i));
-                                } */
+                                } 
                                 using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
                                 {
                                 //GUILayout.Label( "" + property.objectReferenceValue );
@@ -143,8 +154,8 @@ public static class EventEdit
                         
                     }
 
-                //}
-            }
+                //} 
+            } */
         }
     }
 }

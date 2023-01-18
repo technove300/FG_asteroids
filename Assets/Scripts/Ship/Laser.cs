@@ -12,14 +12,18 @@ namespace Ship
         [Header("Project References:")] [SerializeField]
         private LaserRuntimeSet _lasers;
 
-        [Header("Values:")]
-        [SerializeField] private float _speed = 0.2f;
+        [SerializeField] private ShipConfig shipConfig;
+
+        //[Header("Values:")]
+        //[SerializeField] private float _speed = 0.2f;
 
         private Rigidbody2D _rigidbody;
+
 
         private void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+            //shipConfig = GetComponent<Engine>().shipConfig;
             _lasers.Add(gameObject);
             Debug.Log(" Amount Of Lasers: " + _lasers.Amount);
         }
@@ -32,7 +36,7 @@ namespace Ship
         private void FixedUpdate()
         {
             var trans = transform;
-            _rigidbody.MovePosition(trans.position + trans.up * _speed);
+            _rigidbody.MovePosition(trans.position + trans.up * shipConfig.laserSpeed);
         }
     }
 }
