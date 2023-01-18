@@ -46,7 +46,7 @@ namespace Asteroids
 
         private void HitByLaser()
         {
-            _onAsteroidDestroyed.Raise(_instanceId);
+            //maxEvent.Raise();
             Destroy(gameObject);
         }
 

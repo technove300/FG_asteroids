@@ -102,6 +102,24 @@ public static class EventEdit
                     //currentEvent = null;
                 }
             }
+
+            var objects = Resources.FindObjectsOfTypeAll<MaxEvent>();
+            foreach (MaxEvent obj in objects)
+            {
+                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
+                {
+                    using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                    {
+                    GUILayout.Label(obj.name);
+                    }
+                    SerializedObject so = new SerializedObject(obj);
+                    so.Update();
+                    //GUILayout.Label(obj.name);
+                    EditorGUILayout.PropertyField( so.FindProperty( "mevent" ));
+                    so.ApplyModifiedProperties();
+                }
+
+            }
             /*
             var gameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             using ( var scrollView = new EditorGUILayout.ScrollViewScope(scrollPos))

@@ -9,6 +9,7 @@ namespace Ship
         [Range(0f, 10f)] [SerializeField] public float throttlePower;
         [Range(0f, 10f)] [SerializeField] public float rotationPower;
         [Range(0f, 0.5f)] [SerializeField] public float laserSpeed;
+        [SerializeField] public int health,collisionDamage;
     }
     
 }

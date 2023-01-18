@@ -6,7 +6,7 @@ using Variables;
 
 namespace UI
 {
-    public class UI : MonoBehaviour
+    public class UI : MonoBehaviour, IMaxEventListener
     {
         [Header("Health:")]
         [SerializeField] private IntVariable _healthVar;
@@ -50,6 +50,11 @@ namespace UI
         private void SetLaserText(string text)
         {
             _laserText.text = text;
+        }
+
+        public void OnMaxEvent()
+        {
+            Debug.Log("event recieved");
         }
     }
 }

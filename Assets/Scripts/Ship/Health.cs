@@ -7,6 +7,11 @@ namespace Ship
         private int _health = 10;
         
         private const int MIN_HEALTH = 0;
+
+        void Awake()
+        {
+            
+        }
         
         public void TakeDamage(int damage)
         { 
