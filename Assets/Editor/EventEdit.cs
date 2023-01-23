@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -6,11 +6,13 @@ using DefaultNamespace.ScriptableEvents;
 using DefaultNamespace.ScriptableEvents.Editor;
 using Variables;
 
-public static class EventEdit
+public class EventEdit : EditorWindow
 {
-    static ScriptableEventBase currentEvent = null;
-    static Vector2 scrollPos;
-    public static void ModalEditor()
+    ScriptableEventBase currentEvent = null;
+    Vector2 scrollPos;
+
+    [MenuItem("Tools/Event Editor")] public static void Open() => GetWindow<EventEdit>( "Modular Event Editor" );
+    public void OnGUI()
     {
         using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
         {
@@ -48,9 +50,9 @@ public static class EventEdit
                 }
             }
 
-            var scriptableEvents = Resources.FindObjectsOfTypeAll<ScriptableEventBase>();
+            var scriptableEvents = Resources.FindObjectsOfTypeAll<MaxEventObj>();
 
-            foreach (ScriptableEventBase obj in scriptableEvents)
+            foreach (MaxEventObj obj in scriptableEvents)
             {
                 using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
                 {
@@ -58,122 +60,91 @@ public static class EventEdit
                     {
                         GUILayout.Label( obj.name );
                     }
-                    ScriptableEventEditor.MakeGUI(obj);
                 }
             }
         }
-
-        using (new GUILayout.VerticalScope (EditorStyles.helpBox))
+        using (new GUILayout.HorizontalScope())
         {
-            using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+            using (new GUILayout.VerticalScope( EditorStyles.helpBox))
             {
-                GUILayout.Label( "Event Variables");
-
-            }
-            var eventVars = Resources.FindObjectsOfTypeAll<IntObservable>();
-            foreach (IntObservable obj in eventVars)
-            {
-                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
+                using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
                 {
-                    using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                    GUILayout.Label( "Event Listeners" );
+                    if (GUILayout.Button( "Add New" ,EditorStyles.toolbarButton))
                     {
-                        GUILayout.Label(AssetDatabase.GetAssetPath(obj.GetInstanceID()));
+                        //currentEvent = null;
                     }
-                    using ( new GUILayout.HorizontalScope ())
+                }
+
+                var objects = Resources.FindObjectsOfTypeAll<MaxEventObj>();
+                foreach (MaxEventObj obj in objects)
+                {
+                    using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
                     {
+                        using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                        {
+                        GUILayout.Label(obj.name);
+                        }
                         SerializedObject so = new SerializedObject(obj);
                         so.Update();
-                        GUILayout.Label(obj.name);
-                        //EditorGUILayout.PropertyField( so.FindProperty( "_value" ));
-                        EditorGUILayout.PropertyField( so.FindProperty( "_onValueChangedEvent" ));
+                        //GUILayout.Label(obj.name);
+                        EditorGUILayout.PropertyField( so.FindProperty( "mevent" ));
+                        so.ApplyModifiedProperties();
+                    }
+
+                }
+            }
+            using (new GUILayout.VerticalScope( EditorStyles.helpBox, GUILayout.MaxWidth(500)))
+            {
+                using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                {
+                    GUILayout.Label( "Event Callers" );
+                    
+                }
+                using ( var scrollView = new EditorGUILayout.ScrollViewScope(scrollPos))
+                {
+                    scrollPos = scrollView.scrollPosition;
+                    var objects = Resources.FindObjectsOfTypeAll<MonoBehaviour>();
+                    foreach (MonoBehaviour obj in objects)
+                    {
+                        List<SerializedProperty> properties = new List<SerializedProperty>();
+                        SerializedObject so = new SerializedObject(obj);
+                        
+                        var property = so.GetIterator();
+                        while (property.NextVisible(true))
+                        {
+                            if (property.type != typeof(MaxEvent).Name) continue;
+                            properties.Add(property.Copy());
+                        }
+                        //Debug.Log(properties.Count);
+                        if (properties.Count == 0) continue;
+                        so.Update();
+                        using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
+                        {
+                            using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
+                            {
+                                GUILayout.Label(obj.name, EditorStyles.boldLabel);
+                                if (GUILayout.Button( " Add Callback " ,EditorStyles.toolbarButton))
+                                {
+                                    
+                                }
+                                if (GUILayout.Button( "Object Path: " + AssetDatabase.GetAssetOrScenePath(obj) ,EditorStyles.toolbarButton))
+                                {
+                                    AssetDatabase.OpenAsset(obj);
+                                }
+                            }
+                            foreach (SerializedProperty sp in properties)
+                            {
+                                using ( new GUILayout.VerticalScope ( ))
+                                {
+                                    EditorGUILayout.PropertyField(sp);
+                                }
+                            } 
+                        }
                         so.ApplyModifiedProperties();
                     }
                 }
             }
-        }
-
-        using (new GUILayout.VerticalScope( EditorStyles.helpBox ))
-        {
-            using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
-            {
-                GUILayout.Label( "Event I/O" );
-                if (GUILayout.Button( "Examine" ,EditorStyles.toolbarButton, GUILayout.Width(100)))
-                {
-                    //currentEvent = null;
-                }
-            }
-
-            var objects = Resources.FindObjectsOfTypeAll<MaxEvent>();
-            foreach (MaxEvent obj in objects)
-            {
-                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
-                {
-                    using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
-                    {
-                    GUILayout.Label(obj.name);
-                    }
-                    SerializedObject so = new SerializedObject(obj);
-                    so.Update();
-                    //GUILayout.Label(obj.name);
-                    EditorGUILayout.PropertyField( so.FindProperty( "mevent" ));
-                    so.ApplyModifiedProperties();
-                }
-
-            }
-            /*
-            var gameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-            using ( var scrollView = new EditorGUILayout.ScrollViewScope(scrollPos))
-            {
-                scrollPos = scrollView.scrollPosition;
-                //foreach (GameObject go in gameObjects)
-                //{
-                    var l = Object.FindObjectsOfType<MonoBehaviour>();
-                    foreach (var script in l ) //go.GetComponentsInChildren<MonoBehaviour>(true)) 
-                    {
-                            if (script == null) continue;
-                            if (!(script.ToString().Contains("ScriptableEvent"))) continue;
-
-                            using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
-                            {
-                                GUILayout.Label(AssetDatabase.GetAssetPath(script.GetInstanceID()));
-                            }
-                            
-                            SerializedObject so = new SerializedObject(script);
-                            so.Update();
-                            
-                            string targetVariableTypeName = typeof(ScriptableEventInt).Name;
-                            //GUILayout.Label(targetVariableTypeName);
-                            var property = so.GetIterator();
-                            
-                            while (property.NextVisible(true))
-                            {
-                                //GUILayout.Label("" + property.propertyType);
-                                //if (property.propertyType != SerializedPropertyType.ObjectReference) continue;
-                                //if (!property.type.ToString().Contains("ScriptableEvent")) continue;
-                                using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
-                                {
-                                // We found our property!
-                                // Invokes a custom method, which
-                                // can validate & do other stuff
-                                /*
-                                if (property.isArray) //also manages arrays
-                                {
-                                    for (int i = 0; i < property.arraySize; i++)
-                                        OnVariable.Invoke(property.GetArrayElementAtIndex(i));
-                                } 
-                                using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
-                                {
-                                //GUILayout.Label( "" + property.objectReferenceValue );
-                                }
-                                EditorGUILayout.PropertyField( property );
-                                }
-                            }
-                            so.ApplyModifiedProperties();
-                        
-                    }
-
-                //} 
-            } */
         }
     }
 }

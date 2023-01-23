@@ -9,7 +9,7 @@ using Variables;
 public class AstroEdit : EditorWindow
 {
     int mode = 0;
-    string[] modeNames = {"Ship", "Asteroids", "Variables", "Events", "Graphics"};
+    string[] modeNames = {"Ship", "Asteroids", "Variables", "Graphics"};
     Vector2 scrollPos;
 
 
@@ -25,8 +25,7 @@ public class AstroEdit : EditorWindow
             case 0:  ShipEdit.ModalEditor();   break;
             case 1:  AstroidEdit.ModalEditor();   break;
             case 2:  VarEdit.ModalEditor();   break;
-            case 3:  EventEdit.ModalEditor();   break;
-            case 4:  GfxEdit.ModalEditor();   break;
+            case 3:  GfxEdit.ModalEditor();   break;
             default:    break;
         }
     }

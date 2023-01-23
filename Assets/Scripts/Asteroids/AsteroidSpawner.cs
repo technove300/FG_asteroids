@@ -8,6 +8,7 @@ namespace Asteroids
     {
         [SerializeField] private Asteroid _asteroidPrefab;
         [SerializeField] private SpawnerSettings spawnerSettings;
+        [SerializeField] private MaxEvent _hekjdevent;
         private float _minSpawnTime;
         private float _maxSpawnTime;
         private int _minAmount;

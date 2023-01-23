@@ -6,12 +6,12 @@ using Variables;
 
 namespace UI
 {
-    public class UI : MonoBehaviour, IMaxEventListener
+    public class UI : MonoBehaviour
     {
         [Header("Health:")]
         [SerializeField] private IntVariable _healthVar;
         [SerializeField] private TextMeshProUGUI _healthText;
-        [SerializeField] private ScriptableEventIntReference _onHealthChangedEvent;
+        [SerializeField] private MaxEvent _onHealthChangedEvent;
         
         [Header("Score:")]
         [SerializeField] private TextMeshProUGUI _scoreText;
