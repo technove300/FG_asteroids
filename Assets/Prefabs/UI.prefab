@@ -534,7 +534,8 @@ MonoBehaviour:
   _healthVar: {fileID: 11400000, guid: 40cfb1e1b58e0f84a966e03698c56110, type: 2}
   _healthText: {fileID: 7101966235834179332}
   _onHealthChangedEvent:
-    callbacks: []
+    callbacks:
+    - {fileID: 11400000, guid: 024866dd88a3eb3439d02d1f19231246, type: 2}
   _scoreText: {fileID: 7101966235281579915}
   _timerText: {fileID: 7101966234334493684}
   _laserText: {fileID: 7101966235362614044}

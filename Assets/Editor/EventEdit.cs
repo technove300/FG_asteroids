@@ -10,6 +10,7 @@ public class EventEdit : EditorWindow
 {
     ScriptableEventBase currentEvent = null;
     Vector2 scrollPos;
+    string nname = "sadasd";
 
     [MenuItem("Tools/Event Editor")] public static void Open() => GetWindow<EventEdit>( "Modular Event Editor" );
     public void OnGUI()
@@ -44,21 +45,20 @@ public class EventEdit : EditorWindow
             using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
             {
                 GUILayout.Label( "Events" );
-                if (GUILayout.Button( "Create New Event" ,EditorStyles.toolbarButton, GUILayout.Width(200)))
-                {
-                    currentEvent = null;
-                }
+                
             }
 
-            var scriptableEvents = Resources.FindObjectsOfTypeAll<MaxEventObj>();
+            var scriptableEvents = Resources.LoadAll<MaxEventObj>("Resources/Scriptable Objects/Events");
+            var objects = Resources.FindObjectsOfTypeAll<MaxEventObj>();
 
-            foreach (MaxEventObj obj in scriptableEvents)
+            foreach (MaxEventObj obj in objects)
             {
                 using ( new GUILayout.VerticalScope ( EditorStyles.helpBox ))
                 {
                     using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
                     {
                         GUILayout.Label( obj.name );
+
                     }
                 }
             }
@@ -72,7 +72,10 @@ public class EventEdit : EditorWindow
                     GUILayout.Label( "Event Listeners" );
                     if (GUILayout.Button( "Add New" ,EditorStyles.toolbarButton))
                     {
-                        //currentEvent = null;
+                        MaxEventObj newObj = ScriptableObject.CreateInstance<MaxEventObj>();
+                        AssetDatabase.CreateAsset(newObj, "Assets/Scriptable Objects/Events/NewEvent.asset");
+                        AssetDatabase.SaveAssets();
+                        AssetDatabase.Refresh();
                     }
                 }
 
@@ -83,13 +86,25 @@ public class EventEdit : EditorWindow
                     {
                         using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
                         {
-                        GUILayout.Label(obj.name);
+                        
+                        var path = AssetDatabase.GetAssetPath(obj);
+                        GUILayout.Label(path);
+
                         }
                         SerializedObject so = new SerializedObject(obj);
                         so.Update();
                         //GUILayout.Label(obj.name);
+                        EditorGUILayout.PropertyField( so.FindProperty( "m_Name"));
                         EditorGUILayout.PropertyField( so.FindProperty( "mevent" ));
                         so.ApplyModifiedProperties();
+                        if (!AssetDatabase.GetAssetPath(obj).Contains( so.FindProperty("m_Name").stringValue))
+                        {
+                            AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(obj), so.FindProperty("m_Name").stringValue + ".asset");
+                        }
+                        if (GUILayout.Button( "Delete" ,EditorStyles.toolbarButton))
+                        {
+                            AssetDatabase.MoveAssetToTrash(AssetDatabase.GetAssetPath(obj));
+                        }
                     }
 
                 }
@@ -124,10 +139,7 @@ public class EventEdit : EditorWindow
                             using (new GUILayout.HorizontalScope( EditorStyles.toolbar))
                             {
                                 GUILayout.Label(obj.name, EditorStyles.boldLabel);
-                                if (GUILayout.Button( " Add Callback " ,EditorStyles.toolbarButton))
-                                {
-                                    
-                                }
+                                
                                 if (GUILayout.Button( "Object Path: " + AssetDatabase.GetAssetOrScenePath(obj) ,EditorStyles.toolbarButton))
                                 {
                                     AssetDatabase.OpenAsset(obj);
